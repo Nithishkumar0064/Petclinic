@@ -7,8 +7,6 @@ pipeline {
     }
 
 	environment {
-  registry = 'nithishnithi/tomcat'
-  containerName = 'my-container'
   registryCredentials = 'Docker_credential'
   SCANNER_HOME = tool 'sonar-scanner'
  }
@@ -40,26 +38,21 @@ pipeline {
 	}
 		stage('Build docker image'){
             steps {
-                   sh 'image = docker.build("${registry}:$BUILD_NUMBER")'
-                
+		        sh 'docker build -t ${registryCredentials_USR}/tomcat3:${BUILD_ID} .'
             }
         }
         stage('Push image to Hub'){
             steps {
-                sh 'echo Registry-push'
-                sh '''
-                    docker.withRegistry('', registryCredentials) 
-                        image.push()
-                        image.push('latest')
-                    sh '''
-                
+                sh 'docker login -u ${registryCredentials_USR} -p ${registryCredentials_PSW}'
+		        sh 'docker push ${registryCredentials_USR}/tomcat3:${BUILD_ID}'
             }
         }
-        stage('Deploy to kube') {
+        stage('Deploy ') {
             steps {
-                sh 'docker run -itd --name ${containerName} -p 8090:8080 ${registry}'
+                sh 'docker run -itd --name cont-${BUILD_ID} -p 8000:8080 ${registryCredentials_USR}/tomcat3:${BUILD_ID}'
             }
             
         }
+        
     }
 }
