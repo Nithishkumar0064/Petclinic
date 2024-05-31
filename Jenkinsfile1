@@ -38,7 +38,7 @@ pipeline {
 	}
 		stage('Build docker image'){
             steps {
-		        sh 'docker build -t ${registryCredentials_USR}/tomcat3:${BUILD_ID} .'
+		        sh 'docker build -t ${registryCredentials_USR}/tomcat:${BUILD_ID} .'
             }
         }
         stage('Push image to Hub'){
