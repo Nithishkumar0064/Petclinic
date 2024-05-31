@@ -32,7 +32,7 @@ pipeline {
 		 stage('sonaqube-scanner') {
             steps {
 			withSonarQubeEnv(credentialsId: 'sonar-token') {
-                sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.url=http://18.60.232.248:9000/ -Dsonar.login=squ_82554def0277cb9647264d3b9b44eb38646d4a51 -Dsonar.project=new-project \
+                sh ''' $SCANNER_HOME/bin/sonar-scanner   -Dsonar.project=new-project \
 			-Dsonar.java.binaries=. \
                		 -Dsonar.projectKey=Petclinic '''
 		}
