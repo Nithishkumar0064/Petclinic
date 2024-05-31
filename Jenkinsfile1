@@ -1,0 +1,63 @@
+
+pipeline {
+    agent ('docker')
+	
+	tools{
+        jdk 'jdk11'
+        maven 'maven3'
+    }
+
+	environment {
+  registry = 'nithishnithi/tomcat'
+  containerName = 'my-container'
+  registryCredentials = 'Docker_credential'
+  SCANNER_HOME = tool 'sonar-scanner'
+ }
+	
+	
+	
+    stages {
+        stage('Git-Checkout') {
+            steps {
+                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/Nithishkumar0064/Petclinic.git'
+            }
+        }
+		
+		 stage('Build Stage'){
+            steps{
+                sh 'mvn clean install'
+            }
+         }
+		
+		 stage('sonaqube-scanner') {
+            steps {
+                sh''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.url=http://18.60.232.248:9000/ -Dsonar.login=squ_82554def0277cb9647264d3b9b44eb38646d4a51 -Dsonar.project=new-project \
+				-Dsonar.java.binaries=. \
+                -Dsonar.projectKey=Petclinic '''
+			}
+        }
+		stage('Build docker image'){
+            steps {
+                   sh 'image = docker.build("${registry}:$BUILD_NUMBER")'
+                
+            }
+        }
+        stage('Push image to Hub'){
+            steps {
+                sh 'echo Registry-push'
+                sh '''
+                    docker.withRegistry('', registryCredentials) 
+                        image.push()
+                        image.push('latest')
+                    sh '''
+                
+            }
+        }
+        stage('Deploy to kube') {
+            steps {
+                sh 'docker run -itd --name ${containerName} -p 8090:8080 ${registry}'
+            }
+            
+        }
+    }
+}
