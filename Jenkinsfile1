@@ -30,7 +30,7 @@ pipeline {
             steps {
 			 
                 sh '''
-			$SCANNER_HOME/bin/sonar-scanner -Dsonar.url=http://18.61.30.255:9000/ -Dsonar.login=squ_82554def0277cb9647264d3b9b44eb38646d4a51 -Dsonar.project=Petclinic \
+			$SCANNER_HOME/bin/sonar-scanner -Dsonar.url=http://18.60.144.54:9000/ -Dsonar.login=squ_0c330b30d95cc59b5483bb4a81d3ea37ccabcf03 -Dsonar.project=Petclinic \
 			-Dsonar.java.binaries=. \
                		 -Dsonar.projectKey=Petclinic '''
 			
