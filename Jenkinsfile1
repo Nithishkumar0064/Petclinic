@@ -7,7 +7,7 @@ pipeline {
     }
 
 	environment {
-  registryCredentials = 'Docker_credential'
+ registryCredentials = credentials('Docker_credential')
   SCANNER_HOME = tool 'sonar-scanner'
  }
 	
@@ -44,9 +44,8 @@ pipeline {
         }
         stage('Push image to Hub'){
             steps {
-               withDockerRegistry(credentialsId: 'Docker_credential', url: 'https://hub.docker.com/') {
- 		 sh "docker tag image1 nithishnithi/pet-clinic123:latest "
-  		sh "docker push nithishnithi/pet-clinic123:latest "
+              sh 'docker login -u ${registryCredentials_USR} -p ${registryCredentials_PSW}'
+		sh 'docker push ${registryCredentials_USR}/pet-clinic123:latest:${BUILD_ID}'
  
 		}
             }
