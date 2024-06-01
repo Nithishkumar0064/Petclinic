@@ -44,13 +44,16 @@ pipeline {
         }
         stage('Push image to Hub'){
             steps {
-                sh 'docker login -u ${registryCredentials_USR} -p ${registryCredentials_PSW}'
-		        sh 'docker push ${registryCredentials_USR}/java:${BUILD_ID}'
+               withDockerRegistry(credentialsId: 'Docker_credential', url: 'https://hub.docker.com/') {
+ 		 sh "docker tag image1 nithishnithi/pet-clinic123:latest "
+  		sh "docker push nithishnithi/pet-clinic123:latest "
+ 
+		}
             }
         }
         stage('Deploy ') {
             steps {
-                sh 'docker run -itd --name cont-${BUILD_ID} -p 8000:8082 ${registryCredentials_USR}/java:${BUILD_ID}'
+                sh 'docker run -itd --name cont-${BUILD_ID} -p 8000:8082 nithishnithi/pet-clinic123:latest:${BUILD_ID}'
             }
             
         }
